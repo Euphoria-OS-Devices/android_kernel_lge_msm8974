@@ -446,14 +446,20 @@ err_sysfs:
  */
 int cpuidle_register_device(struct cpuidle_device *dev)
 {
-	int ret;
+	int ret = -EBUSY;
 
 	if (!dev)
 		return -EINVAL;
 
 	mutex_lock(&cpuidle_lock);
 
-	if ((ret = __cpuidle_register_device(dev))) {
+	if (dev->registered) {
+		mutex_unlock(&cpuidle_lock);
+		return ret;
+	}
+
+	ret = __cpuidle_register_device(dev);
+	if (ret) {
 		mutex_unlock(&cpuidle_lock);
 		return ret;
 	}
