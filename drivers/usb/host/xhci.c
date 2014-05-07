@@ -156,7 +156,7 @@ int xhci_reset(struct xhci_hcd *xhci)
 {
 	u32 command;
 	u32 state;
-	int ret;
+	int ret, i;
 
 	state = xhci_readl(xhci, &xhci->op_regs->status);
 	if ((state & STS_HALT) == 0) {
@@ -179,8 +179,16 @@ int xhci_reset(struct xhci_hcd *xhci)
 	 * xHCI cannot write to any doorbells or operational registers other
 	 * than status until the "Controller Not Ready" flag is cleared.
 	 */
-	return handshake(xhci, &xhci->op_regs->status,
-			 STS_CNR, 0, 10 * 1000 * 1000);
+	ret = handshake(xhci, &xhci->op_regs->status,
+			STS_CNR, 0, 10 * 1000 * 1000);
+
+	for (i = 0; i < 2; ++i) {
+		xhci->bus_state[i].port_c_suspend = 0;
+		xhci->bus_state[i].suspended_ports = 0;
+		xhci->bus_state[i].resuming_ports = 0;
+	}
+
+	return ret;
 }
 
 #ifdef CONFIG_PCI
@@ -324,6 +332,16 @@ static void xhci_cleanup_msix(struct xhci_hcd *xhci)
 
 	hcd->msix_enabled = 0;
 	return;
+}
+
+static void xhci_msix_sync_irqs(struct xhci_hcd *xhci)
+{
+	int i;
+
+	if (xhci->msix_entries) {
+		for (i = 0; i < xhci->msix_count; i++)
+			synchronize_irq(xhci->msix_entries[i].vector);
+	}
 }
 
 static int xhci_try_enable_msi(struct usb_hcd *hcd)
@@ -786,18 +804,6 @@ void xhci_shutdown(struct usb_hcd *hcd)
 }
 
 #ifdef CONFIG_PM
-
-#ifdef CONFIG_PCI
-static void xhci_msix_sync_irqs(struct xhci_hcd *xhci)
-{
-	int i;
-
-	if (xhci->msix_entries) {
-		for (i = 0; i < xhci->msix_count; i++)
-			synchronize_irq(xhci->msix_entries[i].vector);
-	}
-}
-#endif /* CONFIG_PCI */
 
 static void xhci_save_registers(struct xhci_hcd *xhci)
 {

@@ -1801,6 +1801,7 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
 	xhci->event_ring = NULL;
 	xhci_dbg(xhci, "Freed event ring\n");
 
+	xhci->cmd_ring_reserved_trbs = 0;
 	if (xhci->cmd_ring)
 		xhci_ring_free(xhci, xhci->cmd_ring);
 	xhci->cmd_ring = NULL;
@@ -1860,6 +1861,24 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
 
 	if (!xhci->rh_bw)
 		goto no_bw;
+
+	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
+	for (i = 0; i < num_ports; i++) {
+		struct xhci_interval_bw_table *bwt = &xhci->rh_bw[i].bw_table;
+		for (j = 0; j < XHCI_MAX_INTERVAL; j++) {
+			struct list_head *ep = &bwt->interval_bw[j].endpoints;
+			while (!list_empty(ep))
+				list_del_init(ep->next);
+		}
+	}
+
+	for (i = 0; i < num_ports; i++) {
+		struct xhci_tt_bw_info *tt, *n;
+		list_for_each_entry_safe(tt, n, &xhci->rh_bw[i].tts, tt_list) {
+			list_del(&tt->tt_list);
+			kfree(tt);
+		}
+	}
 
 no_bw:
 	xhci->num_usb2_ports = 0;
