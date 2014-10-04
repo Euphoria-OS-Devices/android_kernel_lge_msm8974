@@ -351,7 +351,7 @@ KERNELFLAGS	= $(GRAPHITE) -O3 -munaligned-access -fgcse-sm -fgcse-las -fsched-sp
 MODFLAGS	= -DMODULE $(KERNELFLAGS)
 CFLAGS_MODULE 	= $(MODFLAGS)
 AFLAGS_MODULE 	= $(MODFLAGS)
-LDFLAGS_MODULE 	= -T $(srctree)/scripts/module-common.lds
+LDFLAGS_MODULE 	= -T $(srctree)/scripts/module-common.lds --strip-debug
 CFLAGS_KERNEL	= $(KERNELFLAGS)
 AFLAGS_KERNEL	= $(KERNELFLAGS)
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
@@ -365,17 +365,7 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS 	:= $(GRAPHITE) -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration \
-		   -Wno-format-security -mtune=cortex-a15 \
-		   -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -ffast-math \
-		   -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
-		   -fno-aggressive-loop-optimizations \
-		   -fno-delete-null-pointer-checks \
-		   -Wno-sizeof-pointer-memaccess \
-		   --param l1-cache-size=16 --param l1-cache-line-size=16 --param l2-cache-size=2048 \
-		    $(KERNELFLAGS)
+KBUILD_CFLAGS 	:= $(GRAPHITE) -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -mtune=cortex-a15 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -ffast-math -funswitch-loops -fpredictive-commoning -fgcse-after-reload -fno-aggressive-loop-optimizations -fno-delete-null-pointer-checks -Wno-sizeof-pointer-memaccess $(KERNELFLAGS)
  
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
