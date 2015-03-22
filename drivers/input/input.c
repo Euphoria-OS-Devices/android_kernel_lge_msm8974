@@ -279,7 +279,7 @@ static int input_get_disposition(struct input_dev *dev,
 
 	case EV_KEY:
 		if (is_event_supported(code, dev->keybit, KEY_MAX) &&
-		    !!test_bit(code, dev->key) != value) {
+		    (!!test_bit(code, dev->key)) != value) {
 
 			if (value != 2) {
 				__change_bit(code, dev->key);
@@ -295,7 +295,7 @@ static int input_get_disposition(struct input_dev *dev,
 
 	case EV_SW:
 		if (is_event_supported(code, dev->swbit, SW_MAX) &&
-		    !!test_bit(code, dev->sw) != value) {
+		    (!!test_bit(code, dev->sw) != value)) {
 
 			__change_bit(code, dev->sw);
 			disposition = INPUT_PASS_TO_HANDLERS;
@@ -322,7 +322,7 @@ static int input_get_disposition(struct input_dev *dev,
 
 	case EV_LED:
 		if (is_event_supported(code, dev->ledbit, LED_MAX) &&
-		    !!test_bit(code, dev->led) != value) {
+		    (!!test_bit(code, dev->led) != value)) {
 
 			__change_bit(code, dev->led);
 			disposition = INPUT_PASS_TO_ALL;
