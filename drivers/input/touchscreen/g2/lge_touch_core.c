@@ -50,7 +50,7 @@
 #include <linux/wakelock.h>
 #include <linux/mutex.h>
 
-static int touch_gesture_enable = 0;
+static int touch_gesture_enable = 1;
 static struct wake_lock touch_wake_lock;
 static struct mutex i2c_suspend_lock;
 static struct mutex lpwg_lock;
