@@ -89,14 +89,19 @@ static bool avoid_to_kill(uid_t uid)
 	 * uid == 1001 > radio
 	 * uid == 1002 > bluetooth
 	 * uid == 1010 > wifi
+	 * uid == 1013 > media
 	 * uid == 1014 > dhcp
+	 * uid == 1021 > gps
+	 * uid == 1027 > nfc
 	 */
-	if (uid == 0 || uid == 1001 || uid == 1002 || uid == 1010 ||
-			uid == 1014)
+	if (uid == 1001 || uid == 1002 || uid == 1010
+			|| uid == 1013 || uid == 1014
+			|| uid == 1021 || uid == 1027)
 		return 1;
 	return 0;
 }
 
+#if 0 /* LP draning RAM, We need to trigger OOM on protected_apps/system for now */
 static bool protected_apps(char *comm)
 {
 	if (strcmp(comm, "d.process.acore") == 0 ||
@@ -106,6 +111,7 @@ static bool protected_apps(char *comm)
 		return 1;
 	return 0;
 }
+#endif
 
 static int test_task_flag(struct task_struct *p, int flag)
 {
@@ -471,22 +477,28 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		}
 		pcred = __task_cred(p);
 		uid = pcred->uid;
-		if (avoid_to_kill(uid) || protected_apps(p->comm)){
-			if (tasksize * (long)(PAGE_SIZE / 1024) >= 100000){
+
+#if 0 /* LP draning RAM, We need to trigger OOM on protected_apps for now */
+		if (avoid_to_kill(uid) || protected_apps(p->comm)) {
+#else
+		if (avoid_to_kill(uid)) {
+			if (tasksize * (long)(PAGE_SIZE / 1024) >= 80000) {
 				selected = p;
 				selected_tasksize = tasksize;
 				selected_oom_score_adj = oom_score_adj;
-				lowmem_print(3, "select protected %d (%s), adj %d, size %d, to kill\n",
-				     	p->pid, p->comm, oom_score_adj, tasksize);
+				lowmem_print(2, "select '%s' (%d), adj %hd, size %ldkB, to kill\n",
+					p->comm, p->pid, oom_score_adj, tasksize * (long)(PAGE_SIZE / 1024));
 			} else
-			lowmem_print(3, "skip protected %d (%s), adj %d, size %d, to kill\n",
-			     	p->pid, p->comm, oom_score_adj, tasksize);
-		} else {
+				lowmem_print(2, "selected skipped %s' (%d), adj %hd, size %ldkB, not kill\n",
+					p->comm, p->pid, oom_score_adj, tasksize * (long)(PAGE_SIZE / 1024));
+		} else
+#endif
+		{
 			selected = p;
 			selected_tasksize = tasksize;
 			selected_oom_score_adj = oom_score_adj;
-			lowmem_print(3, "select %d (%s), adj %d, size %d, to kill\n",
-			     	p->pid, p->comm, oom_score_adj, tasksize);
+			lowmem_print(3, "select %s' (%d), adj %hd, size %ldkB, to kill\n",
+				     p->comm, p->pid, oom_score_adj, tasksize * (long)(PAGE_SIZE / 1024));
 		}
 	}
 	if (selected) {
