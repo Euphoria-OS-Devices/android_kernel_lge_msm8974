@@ -169,7 +169,7 @@ static void cpufreq_impulse_timer_resched(unsigned long cpu,
 		pcpu->time_in_idle =
 			get_cpu_idle_time(smp_processor_id(),
 					  &pcpu->time_in_idle_timestamp,
-					  tunables->io_is_busy);
+					  io_is_busy);
 		pcpu->cputime_speedadj = 0;
 		pcpu->cputime_speedadj_timestamp = pcpu->time_in_idle_timestamp;
 		del_timer(&pcpu->cpu_timer);
