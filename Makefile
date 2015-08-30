@@ -332,7 +332,7 @@ include $(srctree)/scripts/Kbuild.include
 
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
-CC		= $(CCACHE) $(CROSS_COMPILE)gcc
+CC		= $(CCACHE) $(CROSS_COMPILE)gcc -marm
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -349,11 +349,14 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   =
-AFLAGS_MODULE   =
-LDFLAGS_MODULE  =
-CFLAGS_KERNEL	=
-AFLAGS_KERNEL	=
+GRAPHITE	= -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-flatten -fgcse-sm -fgcse-las -fsched-spec-load -funroll-loops -fforce-addr -mvectorize-with-neon-quad -ffast-math -fpredictive-commoning -floop-nest-optimize -floop-unroll-and-jam -pthread -fopenmp
+KERNELFLAGS	= $(GRAPHITE) -Ofast -DNDEBUG -munaligned-access -fsingle-precision-constant -mcpu=cortex-a15 -mtune=cortex-a15 -marm -mfpu=neon-vfpv4 -ftree-vectorize -ftree-loop-im -ftree-loop-ivcanon -fprefetch-loop-arrays -fmodulo-sched -fmodulo-sched-allow-regmoves -fivopts -floop-strip-mine -frename-registers
+MODFLAGS	= -DMODULE $(KERNELFLAGS) 
+CFLAGS_MODULE 	= $(MODFLAGS)
+AFLAGS_MODULE 	= $(MODFLAGS)
+LDFLAGS_MODULE 	= -T $(srctree)/scripts/module-common.lds
+CFLAGS_KERNEL	= $(KERNELFLAGS)
+AFLAGS_KERNEL	= $(KERNELFLAGS)
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
@@ -366,11 +369,13 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+KBUILD_CFLAGS   := $(GRAPHITE) -Wall -DNDEBUG -Wundef -Wstrict-prototypes -Wno-trigraphs \
+		   -fno-strict-aliasing -fno-common -mcpu=cortex-a15 -mtune=cortex-a15 -mfpu=neon-vfpv4 \
+		   -Werror-implicit-function-declaration -mvectorize-with-neon-quad \
+		   -Wno-format-security -fstdarg-opt -fsection-anchors \
+		   -fmodulo-sched -fmodulo-sched-allow-regmoves -ftree-vectorize -ffast-math \
+		   -funswitch-loops -fgcse-after-reload -fno-delete-null-pointer-checks
+
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
@@ -562,8 +567,6 @@ all: vmlinux
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
-else
-KBUILD_CFLAGS	+= -O2
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
