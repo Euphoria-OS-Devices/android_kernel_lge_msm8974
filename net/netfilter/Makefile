@@ -127,3 +127,31 @@ obj-$(CONFIG_LG_VPN) += interceptor/
 
 # LGVPN_v33
 obj-$(CONFIG_LG_VPN_V33) += interceptor_v33/
+
+CFLAGS_nf_conntrack_core.o := \
+	-fno-graphite \
+	-fno-graphite-identity \
+	-fno-loop-flatten \
+	-fno-tree-loop-linear \
+	-fno-loop-interchange \
+	-fno-loop-strip-mine \
+	-fno-loop-block \
+	-fno-loop-nest-optimize \
+	-fno-loop-unroll-and-jam \
+	-fno-loop-parallelize-all \
+	-ftree-parallelize-loops=0 \
+	-fno-openmp
+
+CFLAGS_xt_hashlimit.o := \
+	-fno-graphite \
+	-fno-graphite-identity \
+	-fno-loop-flatten \
+	-fno-tree-loop-linear \
+	-fno-loop-interchange \
+	-fno-loop-strip-mine \
+	-fno-loop-block \
+	-fno-loop-nest-optimize \
+	-fno-loop-unroll-and-jam \
+	-fno-loop-parallelize-all \
+	-ftree-parallelize-loops=0 \
+	-fno-openmp
