@@ -176,7 +176,7 @@ do {									\
 #define WL_LONG_DWELL_TIME 	1000
 #define IFACE_MAX_CNT 		2
 #define WL_SCAN_CONNECT_DWELL_TIME_MS 		200
-#define WL_SCAN_JOIN_PROBE_INTERVAL_MS 		200
+#define WL_SCAN_JOIN_PROBE_INTERVAL_MS 		2000
 #define WL_SCAN_JOIN_ACTIVE_DWELL_TIME_MS 	320
 #define WL_SCAN_JOIN_PASSIVE_DWELL_TIME_MS 	400
 #define WL_AF_TX_MAX_RETRY 	5
@@ -184,7 +184,7 @@ do {									\
 #define WL_AF_SEARCH_TIME_MAX           450
 #define WL_AF_TX_EXTRA_TIME_MAX         200
 
-#define WL_SCAN_TIMER_INTERVAL_MS	10000 /* Scan timeout */
+#define WL_SCAN_TIMER_INTERVAL_MS	100000 /* Scan timeout */
 #define WL_CHANNEL_SYNC_RETRY 	5
 #define WL_INVALID 		-1
 
