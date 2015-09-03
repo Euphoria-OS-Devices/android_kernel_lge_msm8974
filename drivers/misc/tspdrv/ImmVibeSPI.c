@@ -363,8 +363,8 @@ EXPORT_SYMBOL(ImmVibeSPI_ForceOut_AmpDisable);
     {
 		if(sm100_flag) {
 			if (atomic_read(&vib.gp1_clk_flag) == 0) {
-				clk_prepare_enable(cam_gp1_clk);
 				atomic_set(&vib.gp1_clk_flag, 1);
+				clk_prepare_enable(cam_gp1_clk);
 			}
 
 			sm100_power_set(1, &vib);
