@@ -327,7 +327,7 @@ static struct platform_driver sm100_driver = {
 */
 /*IMMVIBESPIAPI*/ VibeStatus ImmVibeSPI_ForceOut_AmpDisable(VibeUInt8 nActuatorIndex)
 {
-	printk(KERN_DEBUG "%s : g_bAmpEnabled:%d\n", __func__, g_bAmpEnabled);
+	DEBUG_MSG("%s : g_bAmpEnabled:%d\n", __func__, g_bAmpEnabled);
     if (g_bAmpEnabled)
     {
 		if(sm100_flag) {
@@ -358,7 +358,7 @@ EXPORT_SYMBOL(ImmVibeSPI_ForceOut_AmpDisable);
 */
 /*IMMVIBESPIAPI*/ VibeStatus ImmVibeSPI_ForceOut_AmpEnable(VibeUInt8 nActuatorIndex, VibeInt8 nForce)
 {
-	printk(KERN_DEBUG "%s : g_bAmpEnabled:%d\n", __func__, g_bAmpEnabled);
+	DEBUG_MSG("%s : g_bAmpEnabled:%d\n", __func__, g_bAmpEnabled);
     if (!g_bAmpEnabled)
     {
 		if(sm100_flag) {
@@ -455,7 +455,7 @@ IMMVIBESPIAPI VibeStatus ImmVibeSPI_ForceOut_SetSamples(VibeUInt8 nActuatorIndex
     }
 
 	if(IMMR_DEB)
-		printk("[IMMR] Force set = %d\n", nForce);
+		DEBUG_MSG("[IMMR] Force set = %d\n", nForce);
 
 	// nForce range: SM100: -127~127,  PMIC:0~127
     if (nForce <= 0)
