@@ -30,7 +30,7 @@
 /* Debug Mask setting */
 #define VIBRATOR_DEBUG_PRINT   (0)
 #define VIBRATOR_ERROR_PRINT   (1)
-#define VIBRATOR_INFO_PRINT    (1)
+#define VIBRATOR_INFO_PRINT    (0)
 
 #if (VIBRATOR_INFO_PRINT)
 #define INFO_MSG(fmt, args...) \
