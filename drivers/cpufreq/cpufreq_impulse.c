@@ -990,7 +990,7 @@ static ssize_t store_timer_slack(
 	int ret;
 	unsigned long val;
 
-	ret = kstrtol(buf, 10, &val);
+	ret = kstrtoul(buf, 10, &val);
 	if (ret < 0)
 		return ret;
 
