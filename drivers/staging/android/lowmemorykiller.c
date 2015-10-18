@@ -52,7 +52,7 @@
 #define _ZONE ZONE_NORMAL
 #endif
 
-static uint32_t lowmem_debug_level = 1;
+static uint32_t lowmem_debug_level = 0;
 static int lowmem_adj[6] = {
 	0,
 	1,
@@ -100,18 +100,6 @@ static bool avoid_to_kill(uid_t uid)
 		return 1;
 	return 0;
 }
-
-#if 0 /* LP draning RAM, We need to trigger OOM on protected_apps/system for now */
-static bool protected_apps(char *comm)
-{
-	if (strcmp(comm, "d.process.acore") == 0 ||
-			strcmp(comm, "ndroid.systemui") == 0 ||
-			strcmp(comm, "ndroid.contacts") == 0 ||
-			strcmp(comm, "system:ui") == 0)
-		return 1;
-	return 0;
-}
-#endif
 
 static int test_task_flag(struct task_struct *p, int flag)
 {
@@ -491,9 +479,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			} else
 				lowmem_print(2, "selected skipped %s' (%d), adj %hd, size %ldkB, not kill\n",
 					p->comm, p->pid, oom_score_adj, tasksize * (long)(PAGE_SIZE / 1024));
-		} else
-#endif
-		{
+		} else {
 			selected = p;
 			selected_tasksize = tasksize;
 			selected_oom_score_adj = oom_score_adj;
