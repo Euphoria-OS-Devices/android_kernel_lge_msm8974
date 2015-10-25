@@ -2,7 +2,7 @@
 # mirageKernel for the LG G2
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.4.109 Kernel Configuration
+# Linux/arm 3.4.110 Kernel Configuration
 #
 
 #### Hotplug Options ####
@@ -15,7 +15,7 @@ CONFIG_THERMAL_MONITOR=y
 # CONFIG_THERMAL_MONITOR_SIMPLE is not set
 
 #### CPUFREQ ####
-# CONFIG_MSM_LIMITER is not set
+CONFIG_MSM_LIMITER=y
 CONFIG_STATE_NOTIFIER=y
 
 #### Added Governors ####
@@ -109,7 +109,7 @@ CONFIG_IRQ_WORK=y
 CONFIG_EXPERIMENTAL=y
 CONFIG_INIT_ENV_ARG_LIMIT=32
 CONFIG_CROSS_COMPILE=""
-CONFIG_LOCALVERSION="-mirageKernel-r10"
+CONFIG_LOCALVERSION="-mirageKernel-r11"
 # CONFIG_LOCALVERSION_AUTO is not set
 # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
 CONFIG_HAVE_KERNEL_GZIP=y
