@@ -12,7 +12,6 @@
 #include <linux/state_notifier.h>
 #include <linux/notifier.h>
 #include <linux/export.h>
-#include <linux/fb.h>
 #include <linux/module.h>
 #include <linux/delay.h>
 
