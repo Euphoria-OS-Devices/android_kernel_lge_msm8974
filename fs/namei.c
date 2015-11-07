@@ -1181,25 +1181,12 @@ static int do_lookup(struct nameidata *nd, struct qstr *name,
 	 */
 	if (nd->flags & LOOKUP_RCU) {
 		unsigned seq;
-		dentry = __d_lookup_rcu(parent, name, &seq, nd->inode);
+		*inode = nd->inode;
+		dentry = __d_lookup_rcu(parent, name, &seq, inode);
 		if (!dentry)
 			goto unlazy;
 
-		/*
-		 * This sequence count validates that the inode matches
-		 * the dentry name information from lookup.
-		 */
-		*inode = dentry->d_inode;
-		if (read_seqcount_retry(&dentry->d_seq, seq))
-			return -ECHILD;
-
-		/*
-		 * This sequence count validates that the parent had no
-		 * changes while we did the lookup of the dentry above.
-		 *
-		 * The memory barrier in read_seqcount_begin of child is
-		 *  enough, we can use __read_seqcount_retry here.
-		 */
+		/* Memory barrier in read_seqcount_begin of child is enough */
 		if (__read_seqcount_retry(&parent->d_seq, nd->seq))
 			return -ECHILD;
 		nd->seq = seq;
