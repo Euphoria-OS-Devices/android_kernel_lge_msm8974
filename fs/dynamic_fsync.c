@@ -42,11 +42,11 @@ static int state_notifier_callback(struct notifier_block *this,
 				unsigned long event, void *data)
 {
 	switch (event) {
-		case STATE_NOTIFIER_SUSPEND:
-			dfsync_suspend();
-			break;
-		default:
-			break;
+	case STATE_NOTIFIER_SUSPEND:
+		dfsync_suspend();
+		break;
+	default:
+		break;
 	}
 
 	return NOTIFY_OK;
@@ -54,11 +54,11 @@ static int state_notifier_callback(struct notifier_block *this,
 
 static int __init dfsync_init(void)
 {
- 	notif.notifier_call = state_notifier_callback;
- 	if (state_register_client(&notif))
- 		pr_err("Cannot register state notifier callback for fsync.\n");
- 		
- 	return 0;
+	notif.notifier_call = state_notifier_callback;
+	if (state_register_client(&notif))
+		pr_err("Cannot register state notifier callback for fsync.\n");
+
+	return 0;
 }
 
 static void __exit dfsync_exit(void)
